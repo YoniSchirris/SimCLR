@@ -20,6 +20,10 @@ class GaussianBlur(object):
 
         if prob < 0.5:
             sigma = (self.max - self.min) * np.random.random_sample() + self.min
+            
+            # This is required by cv2 gaussianblur. The original paper just happened to do this (9.6 --> 9)
+            if self.kernel_size % 2 == 0:
+                self.kernel_size += 1
             sample = cv2.GaussianBlur(sample, (self.kernel_size, self.kernel_size), sigma)
 
         return sample
