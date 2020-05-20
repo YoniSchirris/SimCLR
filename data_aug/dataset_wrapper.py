@@ -4,7 +4,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 import torchvision.transforms as transforms
 from data_aug.gaussian_blur import GaussianBlur
 from torchvision import datasets
-import dataset_msi
+from data_aug.dataset_msi import PreProcessedMSIDataset as dataset_msi
 
 
 np.random.seed(0)
@@ -18,17 +18,19 @@ class DataSetWrapper(object):
         self.valid_size = valid_size
         self.s = s
         self.input_shape = eval(input_shape)
+        self.data = data
 
     def get_data_loaders(self):
         data_augment = self._get_simclr_pipeline_transform()
 
-        if data == 'stl10':
+        if self.data == 'stl10':
             train_dataset = datasets.STL10('./data', split='train+unlabeled', download=True,
                                        transform=SimCLRDataTransform(data_augment))
-        elif data == 'histo':
+        elif self.data == 'msi':
             # train_dataset = custom_histo_dataset
-            train_dataset = dataset_msi(root_dir='/home/ys/repos/data/msidata/crc_dx/train', transform=SimCLRDataTransform(data_augment))
-
+            train_dataset = dataset_msi(root_dir='/home/yonis/histogenomics-msc-2019/yoni-code/MsiPrediction/data/msidata/crc_dx/train/', transform=SimCLRDataTransform(data_augment))
+        else:
+            print(f'{self.data} is not an existing data type at this moment. Please check this file to see what you can use')
 
         train_loader, valid_loader = self.get_train_validation_data_loaders(train_dataset)
         return train_loader, valid_loader
