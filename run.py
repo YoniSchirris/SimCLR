@@ -7,7 +7,7 @@ import torch
 def main():
     config = yaml.load(open("config.yaml", "r"), Loader=yaml.FullLoader)
 
-    if torch.cuda.is_available():
+    if torch.cuda.is_available() and config['allow_multiple_gpu']:
         gpu_count = torch.cuda.device_count()
         if gpu_count > 1:
             print(f'There are {gpu_count} GPUs with the current setup, so we will increase batch size and later run the model on all GPUs')

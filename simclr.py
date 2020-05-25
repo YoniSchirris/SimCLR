@@ -67,7 +67,7 @@ class SimCLR(object):
         model = ResNetSimCLR(**self.config["model"]).to(self.device)
         model = self._load_pre_trained_weights(model)
 
-        if self.device == self.cuda_name:
+        if self.device == self.cuda_name and config['allow_multiple_gpu']:
             gpu_count = torch.cuda.device_count()
             if gpu_count > 1:
                 print(f'There are {gpu_count} GPUs with the current setup, so we will run on all the GPUs')
