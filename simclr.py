@@ -95,6 +95,7 @@ class SimCLR(object):
         best_valid_loss = np.inf
 
         for epoch_counter in range(self.config['epochs']):
+            t1 = time.time()
             for (xis, xjs), _ in train_loader:
                 optimizer.zero_grad()
 
@@ -124,6 +125,12 @@ class SimCLR(object):
                     # save the model weights
                     best_valid_loss = valid_loss
                     torch.save(model.state_dict(), os.path.join(model_checkpoints_folder, 'model.pth'))
+                    time_for_epoch = int(time.time()-t1)
+                    print(
+                        f"===\n \
+                            Epoch {epoch_counter}. Time for previous epoch: {time_for_epoch} seconds. Time to go: {((config.epochs - epoch_counter)*time_for_epoch)/60} minutes. Validation loss: {valid_loss}. Best valid loss: {best_valid_loss}\
+                          \n==="
+                    )
 
                 self.writer.add_scalar('validation_loss', valid_loss, global_step=valid_n_iter)
                 valid_n_iter += 1
