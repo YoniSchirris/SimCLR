@@ -105,6 +105,8 @@ class SimCLR(object):
                 loss = self._step(model, xis, xjs, n_iter)
 
                 if n_iter % self.config['log_every_n_steps'] == 0:
+                    print(
+                    f"Epoch {epoch_counter}. Loss = {loss}. Time: {time.strftime('%c', time.localtime())}.")
                     self.writer.add_scalar('train_loss', loss, global_step=n_iter)
 
                 if apex_support and self.config['fp16_precision']:
