@@ -128,7 +128,7 @@ class SimCLR(object):
                     time_for_epoch = int(time.time()-t1)
                     print(
                         f"===\n \
-                            Epoch {epoch_counter}. Time for previous epoch: {time_for_epoch} seconds. Time to go: {((config.epochs - epoch_counter)*time_for_epoch)/60} minutes. Validation loss: {valid_loss}. Best valid loss: {best_valid_loss}\
+                            Epoch {epoch_counter}. Time for previous epoch: {time_for_epoch} seconds. Time to go: {((self.config['epochs'] - epoch_counter)*time_for_epoch)/60} minutes. Validation loss: {valid_loss}. Best valid loss: {best_valid_loss}\
                           \n==="
                     )
 
