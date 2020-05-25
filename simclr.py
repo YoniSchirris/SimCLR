@@ -70,7 +70,7 @@ class SimCLR(object):
             gpu_count = torch.cuda.device_count()
             if gpu_count > 1:
                 print(f'There are {gpu_count} GPUs with the current setup, so we will run on all the GPUs')
-                model = nn.DataParallelism(model)
+                model = torch.nn.DataParallelism(model)
                 print(f'Increasing requested batch size of {self.batch_size} by number of GPUs')
                 self.batch_size *= gpu_count
                 print(f'Batch size is now {self.batch_size}')
