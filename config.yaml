@@ -16,6 +16,8 @@ dataset:
   input_shape: (224,224,3)
   num_workers: 0
   valid_size: 0.05
+  path_to_msi_data: "/home/yonis/histogenomics-msc-2019/yoni-code/MsiPrediction/data/msidata/crc_dx/train/"
+
 
 loss:
   temperature: 0.5
