@@ -32,13 +32,15 @@ class SimCLR(object):
 
     def __init__(self, dataset, config):
         self.config = config
+        self.cuda_name = 'cuda:0'
         self.device = self._get_device()
         self.writer = SummaryWriter()
         self.dataset = dataset
         self.nt_xent_criterion = NTXentLoss(self.device, config['batch_size'], **config['loss'])
 
+
     def _get_device(self):
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        device = self.cuda_name if torch.cuda.is_available() else 'cpu'
         print("Running on:", device)
         return device
 
@@ -63,6 +65,16 @@ class SimCLR(object):
 
         model = ResNetSimCLR(**self.config["model"]).to(self.device)
         model = self._load_pre_trained_weights(model)
+
+        if self.device == self.cuda_name:
+            gpu_count = torch.cuda.device_count()
+            if gpu_count > 1:
+                print(f'There are {gpu_count} GPUs with the current setup, so we will run on all the GPUs')
+                model = nn.DataParallelism(model)
+                print(f'Increasing requested batch size of {self.batch_size} by number of GPUs')
+                self.batch_size *= gpu_count
+                print(f'Batch size is now {self.batch_size}')
+
 
         optimizer = torch.optim.Adam(model.parameters(), 3e-4, weight_decay=eval(self.config['weight_decay']))
 
