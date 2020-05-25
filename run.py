@@ -2,11 +2,17 @@ from simclr import SimCLR
 import yaml
 from data_aug.dataset_wrapper import DataSetWrapper
 import torch
+import argparse
+
 
 
 def main():
-    config = yaml.load(open("config.yaml", "r"), Loader=yaml.FullLoader)
-
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--config_path', type=str, default="config.yaml", help='Name of config file to use')
+    config = parser.parse_args()
+    print(f"Loading {config.config_path}")    
+    config = yaml.load(open(config.config_path, "r"), Loader=yaml.FullLoader)
+    print(f"Model in this file is {config['model']['base_model']}")
     if torch.cuda.is_available() and config['allow_multiple_gpu']:
         gpu_count = torch.cuda.device_count()
         if gpu_count > 1:
