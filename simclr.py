@@ -71,9 +71,7 @@ class SimCLR(object):
             if gpu_count > 1:
                 print(f'There are {gpu_count} GPUs with the current setup, so we will run on all the GPUs')
                 model = torch.nn.DataParallel(model)
-                print(f'Increasing requested batch size of {self.batch_size} by number of GPUs')
-                self.batch_size *= gpu_count
-                print(f'Batch size is now {self.batch_size}')
+
 
 
         optimizer = torch.optim.Adam(model.parameters(), 3e-4, weight_decay=eval(self.config['weight_decay']))
