@@ -4,32 +4,44 @@ from torch.utils.data.sampler import SubsetRandomSampler
 import torchvision.transforms as transforms
 from data_aug.gaussian_blur import GaussianBlur
 from torchvision import datasets
+from data_aug.dataset_msi import PreProcessedMSIDataset as dataset_msi
+
 
 np.random.seed(0)
 
 
 class DataSetWrapper(object):
 
-    def __init__(self, batch_size, num_workers, valid_size, input_shape, s):
+    def __init__(self, batch_size, num_workers, valid_size, input_shape, s, data):
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.valid_size = valid_size
         self.s = s
         self.input_shape = eval(input_shape)
+        self.data = data
 
     def get_data_loaders(self):
         data_augment = self._get_simclr_pipeline_transform()
 
-        train_dataset = datasets.STL10('./data', split='train+unlabeled', download=True,
+        if self.data == 'stl10':
+            train_dataset = datasets.STL10('./data', split='train+unlabeled', download=True,
                                        transform=SimCLRDataTransform(data_augment))
+        elif self.data == 'msi':
+            # train_dataset = custom_histo_dataset
+            train_dataset = dataset_msi(root_dir='/home/yonis/histogenomics-msc-2019/yoni-code/MsiPrediction/data/msidata/crc_dx/train/', transform=SimCLRDataTransform(data_augment))
+        else:
+            print(f'{self.data} is not an existing data type at this moment. Please check this file to see what you can use')
 
         train_loader, valid_loader = self.get_train_validation_data_loaders(train_dataset)
         return train_loader, valid_loader
 
     def _get_simclr_pipeline_transform(self):
         # get a set of data augmentation transformations as described in the SimCLR paper.
+
+        # TODO added ToPILImage for it to work with my MSI dataset. See if this breaks the 
         color_jitter = transforms.ColorJitter(0.8 * self.s, 0.8 * self.s, 0.8 * self.s, 0.2 * self.s)
-        data_transforms = transforms.Compose([transforms.RandomResizedCrop(size=self.input_shape[0]),
+        data_transforms = transforms.Compose([transforms.ToPILImage(),
+                                              transforms.RandomResizedCrop(size=self.input_shape[0]),
                                               transforms.RandomHorizontalFlip(),
                                               transforms.RandomApply([color_jitter], p=0.8),
                                               transforms.RandomGrayscale(p=0.2),
