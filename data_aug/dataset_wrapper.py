@@ -21,6 +21,7 @@ class DataSetWrapper(object):
         self.input_shape = eval(input_shape)
         self.data = data
         self.data_fraction = data_fraction
+        self.train_length = "Not yet initialized"
 
     def get_data_loaders(self):
         data_augment = self._get_simclr_pipeline_transform()
@@ -35,8 +36,12 @@ class DataSetWrapper(object):
         else:
             print(f'{self.data} is not an existing data type at this moment. Please check this file to see what you can use')
 
+        self.train_length = train_dataset.__len__()
         train_loader, valid_loader = self.get_train_validation_data_loaders(train_dataset)
         return train_loader, valid_loader
+    
+    def get_train_length(self):
+        return self.train_length
 
     def _get_simclr_pipeline_transform(self):
         # get a set of data augmentation transformations as described in the SimCLR paper.
