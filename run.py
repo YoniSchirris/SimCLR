@@ -24,7 +24,6 @@ def main():
         print("There are no GPUs available")
 
     dataset = DataSetWrapper(config['batch_size'], **config['dataset'])
-    print(f'The current dataset has {dataset.get_train_length()} items')
     simclr = SimCLR(dataset, config)
     simclr.train()
 
