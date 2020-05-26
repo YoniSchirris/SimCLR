@@ -12,7 +12,7 @@ np.random.seed(0)
 
 class DataSetWrapper(object):
 
-    def __init__(self, batch_size, num_workers, valid_size, input_shape, s, data, path_to_msi_data, data_fraction):
+    def __init__(self, batch_size, num_workers, valid_size, input_shape, s, data, path_to_msi_data, data_fraction=1):
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.valid_size = valid_size
