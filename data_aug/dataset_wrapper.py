@@ -12,7 +12,7 @@ np.random.seed(0)
 
 class DataSetWrapper(object):
 
-    def __init__(self, batch_size, num_workers, valid_size, input_shape, s, data, path_to_msi_data):
+    def __init__(self, batch_size, num_workers, valid_size, input_shape, s, data, path_to_msi_data, data_fraction):
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.valid_size = valid_size
@@ -20,6 +20,7 @@ class DataSetWrapper(object):
         self.path_to_msi_data = path_to_msi_data
         self.input_shape = eval(input_shape)
         self.data = data
+        self.data_fraction = data_fraction
 
     def get_data_loaders(self):
         data_augment = self._get_simclr_pipeline_transform()
@@ -29,7 +30,8 @@ class DataSetWrapper(object):
                                        transform=SimCLRDataTransform(data_augment))
         elif self.data == 'msi':
             # train_dataset = custom_histo_dataset
-            train_dataset = dataset_msi(root_dir=self.path_to_msi_data, transform=SimCLRDataTransform(data_augment))
+            #TODO using a fraction of the data at this moment
+            train_dataset = dataset_msi(root_dir=self.path_to_msi_data, transform=SimCLRDataTransform(data_augment), data_fraction=self.data_fraction)
         else:
             print(f'{self.data} is not an existing data type at this moment. Please check this file to see what you can use')
 

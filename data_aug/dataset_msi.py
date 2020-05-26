@@ -21,7 +21,7 @@ import time
 class PreProcessedMSIDataset(Dataset):
     """Preprocessed MSI dataset from https://zenodo.org/record/2532612 and https://zenodo.org/record/2530835"""
 
-    def __init__(self, root_dir, transform=None):
+    def __init__(self, root_dir, transform=None, data_fraction=1):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -42,12 +42,13 @@ class PreProcessedMSIDataset(Dataset):
 
         self.root_dir = root_dir
         self.setup()
-        self.labels = pd.read_csv(self.root_dir + 'data.csv')
+        self.labels = pd.read_csv(self.root_dir + 'data.csv').sample(frac=data_fraction, random_state=42)
         self.transform = transform
 
     def __len__(self, val=False):
-        full_data_len = len([name for label in self.label_classes.keys() for name in os.listdir(f'{self.root_dir}/{label}') if
-                    os.path.isfile(os.path.join(f'{self.root_dir}/{label}', name)) and name.endswith('.png')])
+        # full_data_len = len([name for label in self.label_classes.keys() for name in os.listdir(f'{self.root_dir}/{label}') if
+        #             os.path.isfile(os.path.join(f'{self.root_dir}/{label}', name)) and name.endswith('.png')])
+        full_data_len = len(self.labels.index)
         return full_data_len
 
     def __getitem__(self, idx):
