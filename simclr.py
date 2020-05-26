@@ -63,6 +63,7 @@ class SimCLR(object):
     def train(self):
 
         train_loader, valid_loader = self.dataset.get_data_loaders()
+        print(f'The current dataset has {self.dataset.get_train_length()} items')
 
         model = ResNetSimCLR(**self.config["model"]).to(self.device)
         model = self._load_pre_trained_weights(model)
